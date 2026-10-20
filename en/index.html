@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Base & Boost Chase</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .rule-panel {
+            margin-top: 20px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            width: 100%;
+            max-width: 1000px;
+            box-sizing: border-box;
+            font-size: 13px;
+            color: #b2bec3;
+            line-height: 1.6;
+        }
+        .rule-panel h3 { margin-top: 0; color: #ffc107; font-size: 15px; }
+        .rule-panel ul { margin: 0; padding-left: 20px; }
+        .rule-panel li { margin-bottom: 5px; }
+        .barrier-log {
+            color: #00cec9;
+            font-weight: bold;
+            font-size: 15px;
+            animation: blink 0.5s ease-in-out 3;
+            background-color: rgba(0, 206, 201, 0.1);
+            padding: 5px;
+            border-radius: 5px;
+            border-left: 5px solid #00cec9;
+        }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+    </style>
+</head>
+<body>
+    <h1>Base & Boost Chase</h1>
+    <div class="suit-rank-guide">Boost Phase Suit Rank: ♠ ＞ ♥ ＞ ♦ ＞ ♣ </div>
+    
+    <div class="game-layout">
+        <!-- Player 1 Panel -->
+        <div id="p1-panel" class="player-panel active">
+            <h2>▼ YOUR TURN <span id="p1-barrier-display" style="color:#00cec9; font-size:14px; margin-left:10px;">Shield: 🛡️×0</span></h2>
+            <div class="status-panel">
+                <div>Base Points: <span id="p1-score">0</span></div>
+                <div>Multiplier: <span id="p1-multiplier">1.0</span>x</div>
+                <div>Total Score: <span id="p1-total">0</span></div>
+            </div>
+            <div id="p1-banner" class="mode-indicator mode-up">Base Phase: UP</div>
+            <div class="board">
+                <div class="card-area"><div>Current Card</div><div id="p1-current" class="card empty"></div></div>
+                <div class="card-area"><div>Hold Slot<span id="p1-hold-status"></span></div><div id="p1-hold" class="card empty"></div></div>
+            </div>
+            <div class="controls">
+                <div class="btn-row">
+                    <button id="p1-btn-hit" class="btn-primary" onclick="handleHit()">HIT</button>
+                    <button id="p1-btn-stand" class="btn-secondary" onclick="handleStand()">STAND</button>
+                </div>
+                <div class="btn-row">
+                    <button id="p1-btn-hold" class="btn-hold" onclick="handleHold()">HOLD</button>
+                    <button id="p1-btn-use-hold" class="btn-hold" onclick="handleUseHold()">USE HOLD</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Panel -->
+        <div id="p2-panel" class="player-panel com-panel">
+            <h2>▼ COMPUTER (AI) <span id="p2-barrier-display" style="color:#00cec9; font-size:14px; margin-left:10px;">Shield: 🛡️×0</span></h2>
+            <div class="status-panel">
+                <div>Base Points: <span id="p2-score">0</span></div>
+                <div>Multiplier: <span id="p2-multiplier">1.0</span>x</div>
+                <div>Total Score: <span id="p2-total">0</span></div>
+            </div>
+            <div id="p2-banner" class="mode-indicator mode-up">Base Phase: UP</div>
+            <div class="board">
+                <div class="card-area"><div>Current Card</div><div id="p2-current" class="card empty"></div></div>
+                <div class="card-area"><div>Hold Slot<span id="p2-hold-status"></span></div><div id="p2-hold" class="card empty"></div></div>
+            </div>
+            <div class="controls" style="visibility: hidden;"><div class="btn-row"><button>HIT</button></div></div>
+        </div>
+    </div>
+    <button id="btn-restart" class="btn-primary" style="display:none; max-width:300px; margin-top:20px;" onclick="location.reload()">PLAY AGAIN</button>
+    <div id="log" class="log-panel"></div>
+
+    <!-- English Rule Explanation -->
+    <div class="rule-panel">
+        <h3>【Official Game Rules】</h3>
+        <ul>
+            <li><b>Game Flow:</b> The game proceeds in 4 steps: Your Base ➡ AI's Base ➡ Your Boost ➡ AI's Boost. Each player gets an independent, fresh 13-card Face Deck for their own Boost phase.</li>
+            <li><b>Phase 1: Base Phase (54-Card Deck / No Loss):</b> Build your score foundation safely.
+                <ul>
+                    <li>If the first card is 7 or lower, succeed by drawing equal/higher than that card; if the first card is 8 or higher, succeed by drawing equal/lower than that card. </li>
+                    <li>Draw cards continuously. In "UP" mode, draw equal/higher. In "DOWN" mode, draw equal/lower to succeed.</li>
+                    <li>Drawing <b>【A】</b> or <b>【7】</b> triggers Mode Reverse (UP ⇄ DOWN), guarantees safety, and grants a free pass for the next card. JOKER resets the target and awards +10 points.</li>
+                    <li>※ J=11, Q=12, K=13, JOKER=10. Failing a match merely ends your phase; <b>your points are NEVER confiscated.</b></li>
+                    <li><b>Starting Bonus:</b> If your 1st card is 8 or higher (8 to K), the phase automatically starts in "DOWN" mode for your advantage.</li>
+                    <li><b>【Streak Bonus: Suit Shield】:</b> If you draw <b>7 or more cards</b> in this phase (including the 1st card), you earn a <b>Suit Shield (Barrier)</b> that protects you from busting in Phase 2! One Shield is added for every multiple of 7 cards drawn (7, 14, 21...).</li>
+                </ul>
+            </li>
+            <li><b>Phase 2: Boost Phase (Face Card Only / Risk of Reset):</b> Amplify your points in a high-stakes thrill ride.
+                <ul>
+                    <li>The deck changes to 13 cards containing only Face cards (J, Q, K) and 1 JOKER.</li>
+                    <li>Draw cards. If the card is of the <b>same suit or a stronger suit (♠＞♥＞♦＞♣)</b> than the previous one, you succeed!</li>
+                    <li>Multiplier gains: <b>J = +0x (keeps streak) / Q = +1x / K = +2x / JOKER = +3x</b>.</li>
+                    <li>Press 【STAND】 to lock in your current multiplier safely.</li>
+                    <li><b>【Multiplier Reset】:</b> If you fail a suit match, your multiplier is <b>reset back to 1.0x</b> and your turn ends. However, the Base Points you earned in Phase 1 are safely protected! (If you have a Shield, it will automatically break to prevent the reset and let you continue).</li>
+                </ul>
+            </li>
+            <li><b>Core System: Hold Slot (Absolute Defense)</b> 
+                <ul>
+                    <li>You can use the Hold function once per phase, independently.</li>
+                    <li>HOLD (Save): Move your current card into the slot and deal a new card to the field.</li>
+                    <li>USE HOLD (Activate): Overwrite the dangerous field card with your held card.</li>
+                    <li>Activation Effect: Completely ignores rank constraints (in Phase 1) or suit constraints (in Phase 2) for an absolute 100% success, resetting the field target to maximum safety for the next turn.</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+body { font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #1a1a2e; color: #fff; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+h1 { color: #e94560; margin-bottom: 5px; font-size: 24px; text-align: center; }
+.suit-rank-guide { font-size: 14px; color: #b2bec3; margin-bottom: 15px; background-color: rgba(255, 255, 255, 0.05); padding: 5px 15px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.1); }
+.game-layout { display: flex; gap: 20px; width: 100%; max-width: 1000px; box-sizing: border-box; }
+.player-panel { flex: 1; background-color: #16213e; border-radius: 15px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); box-sizing: border-box; border: 2px solid transparent; }
+.player-panel.active { border-color: #e94560; background-color: #1a2649; }
+.player-panel.com-panel { background-color: #1b1b22; }
+.player-panel.com-panel.active { border-color: #00cec9; background-color: #20202d; }
+.status-panel { display: flex; justify-content: space-between; background-color: #0f3460; padding: 10px 15px; border-radius: 8px; margin-bottom: 15px; font-size: 14px; font-weight: bold; }
+.mode-indicator { text-align: center; font-size: 18px; font-weight: bold; padding: 8px; border-radius: 8px; margin-bottom: 15px; }
+.mode-up { background-color: #28a745; color: white; }
+.mode-down { background-color: #dc3545; color: white; }
+.mode-shift { background-color: #ffc107; color: #212529; }
+.board { display: flex; justify-content: space-around; margin-bottom: 20px; }
+.card-area { text-align: center; flex: 1; }
+.card-title { font-size: 13px; color: #8395a7; margin-bottom: 5px; }
+.card { width: 80px; height: 115px; background-color: white; border-radius: 10px; display: flex; flex-direction: column; justify-content: center; align-items: center; font-size: 28px; font-weight: bold; color: black; box-shadow: 0 4px 8px rgba(0,0,0,0.3); margin: 0 auto; position: relative; }
+.card.red { color: #d63031; }
+.card.black { color: #2d3436; }
+.card.joker { color: #6c5ce7; background: linear-gradient(135deg, #fff, #a29bfe); }
+.card.empty { background-color: rgba(255,255,255,0.1); border: 2px dashed rgba(255,255,255,0.3); box-shadow: none; color: transparent; }
+.controls { display: flex; flex-direction: column; gap: 10px; }
+.btn-row { display: flex; gap: 10px; }
+button { flex: 1; padding: 12px; font-size: 15px; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; transition: background-color 0.2s; }
+button:disabled { opacity: 0.3; cursor: not-allowed; }
+.btn-primary { background-color: #e94560; color: white; }
+.btn-secondary { background-color: #0f3460; color: white; border: 1px solid #e94560; }
+.btn-hold { background-color: #00cec9; color: white; }
+.log-panel { margin-top: 15px; background-color: #1a1a2e; padding: 10px; border-radius: 8px; height: 130px; overflow-y: auto; font-size: 13px; color: #b2bec3; line-height: 1.5; width: 100%; max-width: 1000px; box-sizing: border-box; }

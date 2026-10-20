@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ベース＆ブースト・チェイス</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .rule-panel {
+            margin-top: 20px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            width: 100%;
+            max-width: 1000px;
+            box-sizing: border-box;
+            font-size: 13px;
+            color: #b2bec3;
+            line-height: 1.6;
+        }
+        .rule-panel h3 { margin-top: 0; color: #ffc107; font-size: 15px; }
+        .rule-panel ul { margin: 0; padding-left: 20px; }
+        .rule-panel li { margin-bottom: 5px; }
+        /* 派手なバリアログ用のスタイル */
+        .barrier-log {
+            color: #00cec9;
+            font-weight: bold;
+            font-size: 15px;
+            animation: blink 0.5s ease-in-out 3;
+            background-color: rgba(0, 206, 201, 0.1);
+            padding: 5px;
+            border-radius: 5px;
+            border-left: 5px solid #00cec9;
+        }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+    </style>
+</head>
+<body>
+    <h1>ベース＆ブースト・チェイス</h1>
+    <div class="suit-rank-guide">ブーストフェイズのスート強さ： ♠ ＞ ♥ ＞ ♦ ＞ ♣ </div>
+    
+    <div class="game-layout">
+        <div id="p1-panel" class="player-panel active">
+            <h2>▼ あなたのターン <span id="p1-barrier-display" style="color:#00cec9; font-size:14px; margin-left:10px;">🛡️×0</span></h2>
+            <div class="status-panel">
+                <div>基本点: <span id="p1-score">0</span></div>
+                <div>倍率: <span id="p1-multiplier">1.0</span>倍</div>
+                <div>現在の総得点: <span id="p1-total">0</span></div>
+            </div>
+            <div id="p1-banner" class="mode-indicator mode-up">ベース: UP</div>
+            <div class="board">
+                <div class="card-area"><div>場札</div><div id="p1-current" class="card empty"></div></div>
+                <div class="card-area"><div>ホールド<span id="p1-hold-status"></span></div><div id="p1-hold" class="card empty"></div></div>
+            </div>
+            <div class="controls">
+                <div class="btn-row">
+                    <button id="p1-btn-hit" class="btn-primary" onclick="handleHit()">HIT (引く)</button>
+                    <button id="p1-btn-stand" class="btn-secondary" onclick="handleStand()">STAND (確定)</button>
+                </div>
+                <div class="btn-row">
+                    <button id="p1-btn-hold" class="btn-hold" onclick="handleHold()">ホールド</button>
+                    <button id="p1-btn-use-hold" class="btn-hold" onclick="handleUseHold()">使う</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="p2-panel" class="player-panel com-panel">
+            <h2>▼ コンピューター (AI) <span id="p2-barrier-display" style="color:#00cec9; font-size:14px; margin-left:10px;">🛡️×0</span></h2>
+            <div class="status-panel">
+                <div>基本点: <span id="p2-score">0</span></div>
+                <div>倍率: <span id="p2-multiplier">1.0</span>倍</div>
+                <div>現在の総得点: <span id="p2-total">0</span></div>
+            </div>
+            <div id="p2-banner" class="mode-indicator mode-up">ベース: UP</div>
+            <div class="board">
+                <div class="card-area"><div>場札</div><div id="p2-current" class="card empty"></div></div>
+                <div class="card-area"><div>ホールド<span id="p2-hold-status"></span></div><div id="p2-hold" class="card empty"></div></div>
+            </div>
+            <div class="controls" style="visibility: hidden;"><div class="btn-row"><button>HIT</button></div></div>
+        </div>
+    </div>
+    <button id="btn-restart" class="btn-primary" style="display:none; max-width:300px; margin-top:20px;" onclick="location.reload()">もう一度戦う</button>
+    <div id="log" class="log-panel"></div>
+
+    <div class="rule-panel">
+        <h3>【ベース＆ブースト・チェイス 最新公式ルール説明】</h3>
+        <ul>
+            <li><b>進行手順：</b> あなたのベース（加算）➡ AIのベース ➡ あなたのブースト（乗算）➡ AIのブースト の順に進みます。</li>
+            <li><b>前半：ベースフェーズ（54枚山・ノーバースト）：</b> 得点の土台を安全に高めるフェーズ。
+                <ul>
+                    <li>最初のカードが7以下ならそのカード「以上」、最初のカードが8以上ならそのカード「以下」を引けば成功。以下これを繰り返す。</li>
+                    <li>【1(A)】と【7】を引くと強制セーフとなり、判定が反転、次の1枚も確定セーフ。JOKERはリセット＆+10点。</li>
+                    <li><b>【連鎖ボーナス・スート防壁】：</b> このフェーズでカードを引いた枚数が<b>7の倍数（7枚、14枚...）</b>に到達するたびに、後半のブーストフェーズでミスを防げる【スート防壁（バリア）】が累積してストックされます！</li>
+                </ul>
+            </li>
+            <li><b>後半：ブーストフェーズ（絵札専用山・マイルドバースト）：</b> 積み上げた基本点を何倍に増幅できるか挑む最終戦。
+                <ul>
+                    <li>山札が絵札（J, Q, K）とジョーカーのみの専用山（13枚）に切り替わります。</li>
+                    <li>ベースフェイズで山を共有していたのとは異なり、次のプレーヤー時に山札はリセットされます。</li>
+                    <li>前のカードより<b>「同じスート」または「より強いスート（♠＞♥＞♦＞♣）」</b>を引ければ連鎖成功。</li>
+                    <li>倍率は <b>J＝＋0倍 / Q＝＋1倍 / K＝＋2倍 / JOKER＝＋3倍</b> ずつ増幅していきます。</li>
+                    <li>【STAND】を押せば安全に現在の高倍率を確定できます。</li>
+                    <li><b>【倍率リセット】：</b> 連鎖に<b>失敗（バースト）すると、倍率は強制的に【 1倍 】に落とされ、その場でフェーズが強制終了</b>となります。ただし、前半に苦労して稼いだベース点（基本点）は1点も失われず、安全に保護されます！（バリアがあればストックを1個消費してミスを完全無効化し、コンボを継続できます）。</li>
+                </ul>
+            </li>
+            <li><b>コアシステム：ホールド（絶対防御）</b> 
+                <ul>
+                    <li>各フェーズで1回ずつ、独立してホールド機能を使用できる。</li>
+                    <li>ホールド（保存）：現在の場札をスロットにキープし、山札から新カードを補填する。</li>
+                    <li>使う（発動）：危険な場札の上から、ストックしていたカードを上書きして場に出す。</li>
+                    <li>発動効果：ベースフェーズでは大小判定、ブーストフェーズではスート判定を完全に無視して「100%無条件で成功」となり、さらに次のターンも確定セーフ（判定リセット）状態となる。</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
