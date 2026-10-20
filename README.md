@@ -1,8 +1,4 @@
-# base-and-boost-chase
-
-============================================================
-Official Game Manual: Base & Boost Chase
-============================================================
+#Official Game Manual: Base & Boost Chase
 
 [1. Game Overview]
 The rules of a game that appeared in my dream felt vaguely familiar yet uniquely non-existent, so I decided to bring it to life as a real, playable game.
